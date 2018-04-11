@@ -10,7 +10,7 @@ deployables:
     replicas: 2
     health_check_path: "/health_check"
     staging:
-      env: 
+      env:
         RACK_ENV: staging
         RAILS_ENV: staging
       host: "asr.staging-ezcater.com"
@@ -19,6 +19,22 @@ deployables:
         RAILS_ENV: production
         RACK_ENV: production
       host: "asr.ezcater.com"
+
+  webcompat:
+    type: web
+    port: 3000
+    command: "bundle exec rails server -p 3000 -b 0.0.0.0"
+    replicas: 2
+    health_check_path: "/health_check"
+    production:
+      env:
+        RAILS_ENV: production
+        RACK_ENV: production
+        READ_ONLY_MODE: true
+        # Change some env vars?
+        NEW_RELIC_APP_NAME: ezcater-asr-compat-production
+        SCHEMA_REGISTRY_PASSWORD: "???"
+      host: "asr-compat.ezcater.com"
 
 tests:
   primary:
