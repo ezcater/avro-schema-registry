@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schema-registry-db
+  namespace: default
+  labels:
+    app: schema-registry-db
+spec:
+  selector:
+    matchLabels:
+      app: schema-registry-db
+  template:
+    metadata:
+      labels:
+        app: schema-registry-db
+    spec:
+      volumes:
+        - name: schema-registry-db-storage
+          persistentVolumeClaim:
+            claimName: schema-registry-db-claim
+      containers:
+      - name: schema-registry-db
+        image: postgres:10.10
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+          - mountPath: "/var/lib/postgresql/data"
+            name: schema-registry-db-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+   name: schema-registry-db
+spec:
+   selector:
+     app: schema-registry-db
+   ports:
+     - protocol: TCP
+       port: 5432
+       targetPort: 5432
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: schema-registry-db-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/lib/ez-tilt/schema-registry/postgresql/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: schema-registry-db-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi

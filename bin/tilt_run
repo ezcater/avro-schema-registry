@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+. ./bin/shared_functions.sh
+
+execute_command_against_web_pod "" "$@"

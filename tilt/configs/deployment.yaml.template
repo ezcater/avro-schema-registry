@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schema-registry-web
+  namespace: default
+  labels:
+    app: schema-registry-web
+spec:
+  selector:
+    matchLabels:
+      app: schema-registry-web
+  template:
+    metadata:
+      labels:
+        app: schema-registry-web
+    spec:
+      volumes:
+        - name: bundle-creds
+          hostPath:
+            path: __HOME__/.bundle/config
+      containers:
+      - name: schema-registry-web
+        env:
+        - name: POSTGRES_HOST
+          value: schema-registry-db
+        - name: POSTGRES_USER
+          value: postgres
+        volumeMounts:
+        - mountPath: /root/.bundle/config
+          name: bundle-creds
+          readOnly: true
+        image: localhost:32000/schema-registry-web:registry
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+   name: schema-registry-web
+spec:
+   selector:
+     app: schema-registry-web
+   ports:
+     - protocol: TCP
+       port: 80
+       targetPort: 21004
