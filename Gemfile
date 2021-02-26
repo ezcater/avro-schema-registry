@@ -4,7 +4,7 @@ ruby '2.6.6'
 
 source 'https://ezcater.jfrog.io/ezcater/api/gems/ezcater-gem-source'
 
-gem 'avro'
+gem 'avro', '~> 1.10.0'
 gem 'avro-resolution_canonical_form', '>= 0.2.0'
 gem 'bootsnap', require: false
 gem 'ezcater_apm'
